@@ -6,6 +6,12 @@
 extern crate alloc;
 
 mod portable;
+mod choice;
+mod ct_option;
+mod traits;
+
+pub use choice::Choice;
+pub use ct_option::CtOption;
 
 #[macro_use]
 mod macros;
@@ -21,5 +27,9 @@ pub trait ConditionalMove {
 
 pub trait ConditionalMoveEq {
     fn conditional_move_eq(&self, rhs: &Self, input: Condition, output: &mut Condition);
-    fn conditional_move_ne(&self, rhs: &Self, input: Condition, output: &mut Condition);
+    fn conditional_move_ne(&self, rhs: &Self, input: Condition, output: &mut Condition) {
+        let mut flag = 1;
+        self.conditional_move_eq(rhs, 0, &mut flag);
+        flag.conditional_move_eq(&1, input, output);
+    }
 }

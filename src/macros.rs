@@ -6,6 +6,20 @@ macro_rules! is_nonzero {
 }
 
 #[macro_export]
+macro_rules! le {
+    ( $a:expr, $b:expr, $bits:expr ) => {
+        (((!$a) | $b) & (($a ^ $b) | !($b.wrapping_sub($a)))) >> ($bits - 1)
+    };
+}
+
+#[macro_export]
+macro_rules! lt {
+    ( $a:expr, $b:expr, $bits:expr ) => {
+        (((!$a) & $b) | (((!$a) | $b) & $a.wrapping_sub($b))) >> ($bits - 1)
+    };
+}
+
+#[macro_export]
 macro_rules! impl_conditional_move {
     ( $($uint:ty),+ ) => {
         $(
@@ -76,6 +90,23 @@ macro_rules! impl_conditional_move_traits {
                 #[inline]
                 fn conditional_move_ne(&self, rhs: &Self, input: Condition, output: &mut Condition) {
                     (*self as $uint).conditional_move_ne(&(*rhs as $uint), input, output);
+                }
+            }
+        )+
+    };
+}
+
+#[macro_export]
+macro_rules! impl_ct_eq {
+    ( $($tp:ty),+ ) => {
+        $(
+            impl CtEq for $tp {
+                #[inline]
+                fn ct_eq(&self, rhs: &Self) -> Choice {
+                    let mut flag = Choice::FALSE;
+                    self.conditional_move_eq(rhs, 1, &mut flag.0);
+
+                    flag
                 }
             }
         )+

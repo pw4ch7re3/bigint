@@ -96,8 +96,8 @@ impl ConditionalMoveEq for u128 {
         let lo = (*self & u128::from(u64::MAX)) as u64;
         let mut flag = 1;
 
-        hi.conditional_move_eq(&((*rhs >> 64) as u64), 0, &mut flag);
-        lo.conditional_move_eq(&((*rhs & u128::from(u64::MAX)) as u64), 0, &mut flag);
+        hi.conditional_move_ne(&((*rhs >> 64) as u64), 0, &mut flag);
+        lo.conditional_move_ne(&((*rhs & u128::from(u64::MAX)) as u64), 0, &mut flag);
         flag.conditional_move_eq(&1, input, output);
     }
 
@@ -109,7 +109,7 @@ impl ConditionalMoveEq for u128 {
 
         hi.conditional_move_ne(&((*rhs >> 64) as u64), 0, &mut flag);
         lo.conditional_move_ne(&((*rhs & u128::from(u64::MAX)) as u64), 0, &mut flag);
-        flag.conditional_move_ne(&0, input, output);
+        flag.conditional_move_eq(&0, input, output);
     }
 }
 
