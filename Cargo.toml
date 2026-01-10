@@ -1,0 +1,11 @@
+[package]
+name = "bigint"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = ["subtle"]
+subtle = []
+
+[dependencies]
+subtle = "2.6"
